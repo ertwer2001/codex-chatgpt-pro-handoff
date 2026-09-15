@@ -5,11 +5,11 @@ import json
 import zipfile
 
 ROOT = Path(__file__).resolve().parent
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 FILES = [
     'README.md', 'START_HERE.md', 'LICENSE', 'CHANGELOG.md', 'VALIDATION.md',
     '.gitignore', '.gitattributes', 'install.py', 'verify_package.py', 'build_release.py',
-    'skill-sha256.json', 'test-results.txt',
+    'skill-sha256.json', 'test-results.txt', 'docs/WORKFLOW.en.md',
     'tests/test_cloud_package.py', 'tests/test_handoff_state.py',
     'skill/cj-chatgpt-handoff/SKILL.md', 'skill/cj-chatgpt-handoff/agents/openai.yaml',
     'skill/cj-chatgpt-handoff/references/native-workflow.md',
