@@ -1,5 +1,15 @@
 # Validation scope｜驗證範圍
 
+## Local pilot 0.1.2-local.2 / 本地試行
+
+59 isolated Windows tests passed with no skips: 18 installer/restore, 13 native-ledger fixtures, 10 doctor, 18 evidence/checkpoint/review tests. Actual Windows junction checks cover workspace escape and aliases into sensitive directories. See [the current test log](test-results-local.2.txt).
+
+59 項 Windows 隔離測試全數通過、無略過：18 項安裝還原、13 項交接模擬、10 項自檢、18 項證據／續接／複審測試。包含實際 Windows junction 的專案越界與敏感目錄別名檢查。詳見[本次紀錄](test-results-local.2.txt)。
+
+These tests do not call ChatGPT. Review bundling verifies local parent evidence and selected source versions, not the truth of a test log or Pro's judgment. A fresh end-to-end Pro consultation on this version and another physical computer remain unverified. The sections below describe earlier released baselines.
+
+測試不呼叫 ChatGPT。複審包核对本地前次證據及來源版本，不保證測試日誌真實或 Pro 判斷正確。此版本新的完整 Pro 往返及另一台實體電腦尚未驗證。下列段落保留先前公開版本基準。
+
 ## Public test suites｜公開測試套件
 
 ```text

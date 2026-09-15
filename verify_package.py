@@ -25,9 +25,10 @@ def verify(root):
         checked.append(relative)
     skill_hashes = json.loads((root / 'skill-sha256.json').read_text(encoding='utf-8'))
     expected_skill = {'skill/cj-chatgpt-handoff/' + rel for rel in (
-        'SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'scripts/handoff_state.py')}
+        'SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'scripts/handoff_state.py',
+        'references/evidence-workflow.md', 'scripts/handoff_evidence.py')}
     if set(skill_hashes) != expected_skill:
-        raise ValueError('Expected exactly four Skill hashes')
+        raise ValueError('Skill hashes do not match the expected file set')
     for relative, expected in skill_hashes.items():
         if manifest.get(relative) != expected:
             raise ValueError('Skill and full manifest disagree: ' + relative)

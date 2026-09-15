@@ -1,5 +1,13 @@
 # Changelog｜版本紀錄
 
+## 0.1.2-local.2 — local pilot / 本地試行
+
+- Explicit evidence bundles: selected ranges, source hashes, omission/redaction counts, stale-source checks. / 指定範圍證據包、來源雜湊、省略／遮罩數量與版本變動檢查。
+- Append-only task checkpoints and read-only resume. / 保留歷史版本的任務摘要與唯讀續接。
+- Optional review bundles linked to intact completed requests, requiring change and test sources. / 選用複審包連結完整的已完成請求，要求修改與測試來源。
+- Retains local doctor, native transport and pending-request guards. / 保留自檢、原生交接與 pending 保護。
+- Local pilot only; no new MCP server, live Pro call or public release from this update. / 僅本地試行，未新增 MCP、未呼叫 Pro、尚未公開新版。
+
 ## v0.1.1 — 2026-09-15
 
 - Bilingual README, setup, validation, and release notes. / README、安裝、驗證與 Release 說明改為中英對照。

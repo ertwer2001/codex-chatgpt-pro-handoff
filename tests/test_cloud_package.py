@@ -17,7 +17,7 @@ import unittest
 
 PACKAGE = Path(__file__).resolve().parents[1]
 SKILL = 'cj-chatgpt-handoff'
-FILES = ('SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'scripts/handoff_state.py')
+FILES = ('SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'scripts/handoff_state.py', 'scripts/handoff_evidence.py', 'references/evidence-workflow.md')
 AGENTS_ORIGINAL = '# Existing local rules\nDo not remove this rule.\n'.encode('utf-8')
 CONFIG_ORIGINAL = b'model = "unchanged-test-model"\nmodel_reasoning_effort = "high"\n'
 
@@ -71,7 +71,7 @@ class CloudPackageTests(unittest.TestCase):
         before_backup = snapshot(self.backup_root)
         result = self.cli()
         self.assertEqual(result['status'], 'READY')
-        self.assertEqual(len(result['files_to_change']), 5)
+        self.assertEqual(len(result['files_to_change']), 7)
         self.assertEqual(snapshot(self.home_root), before_home)
         self.assertEqual(snapshot(self.backup_root), before_backup)
 
@@ -94,7 +94,7 @@ class CloudPackageTests(unittest.TestCase):
         self.assertTrue(receipt_path.is_relative_to(self.backup_root))
         receipt = json.loads(receipt_path.read_text(encoding='utf-8'))
         self.assertEqual(receipt['codex_home'], str(self.home.resolve()))
-        self.assertEqual(len(receipt['files']), 5)
+        self.assertEqual(len(receipt['files']), 7)
         self.assertEqual((receipt_path.parent / 'install.py').read_bytes(), (PACKAGE / 'install.py').read_bytes())
         for entry in receipt['files']:
             rel = entry['relative_path']
@@ -120,7 +120,7 @@ class CloudPackageTests(unittest.TestCase):
         before_home, before_backup = snapshot(self.home_root), snapshot(self.backup_root)
         restored = self.cli('--restore', result['receipt'])
         self.assertEqual(restored['status'], 'RESTORE_READY')
-        self.assertEqual(restored['file_count'], 5)
+        self.assertEqual(restored['file_count'], 7)
         self.assertEqual(snapshot(self.home_root), before_home)
         self.assertEqual(snapshot(self.backup_root), before_backup)
 
@@ -128,7 +128,7 @@ class CloudPackageTests(unittest.TestCase):
         result = self.installed()
         restored = self.cli('--restore', result['receipt'], '--apply')
         self.assertEqual(restored['status'], 'RESTORED')
-        self.assertEqual(restored['file_count'], 5)
+        self.assertEqual(restored['file_count'], 7)
         self.assertEqual((self.home / 'AGENTS.md').read_bytes(), AGENTS_ORIGINAL)
         self.assertEqual((self.home / 'config.toml').read_bytes(), CONFIG_ORIGINAL)
         for rel in FILES:

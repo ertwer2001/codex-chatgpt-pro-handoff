@@ -11,7 +11,8 @@ import uuid
 
 PACKAGE = Path(__file__).resolve().parent
 SKILL = 'cj-chatgpt-handoff'
-SOURCE_FILES = ['SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'scripts/handoff_state.py']
+SOURCE_FILES = ['SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'scripts/handoff_state.py',
+                'references/evidence-workflow.md', 'scripts/handoff_evidence.py']
 ROUTE = '''
 
 ## GPT-6 Pro 協作

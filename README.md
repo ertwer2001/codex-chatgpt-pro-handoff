@@ -1,4 +1,10 @@
+> **v0.3.1 source preview / 原始碼預覽**: global project routing and receiver source are included. Portable installer integration is being completed by Pro; this branch is not yet the final installation release. / 已含全域專案分流及接收器，Pro 正在整合可攜安裝器，本分支尚非最終安裝版。
+
 # Codex ChatGPT Pro Handoff Skill｜Codex 專用中英協作工具
+
+**Local pilot: 0.1.2-local.2.** This checkout adds evidence bundles, task checkpoints and optional post-implementation review. The public release link below still downloads v0.1.1. See [the bilingual workflow](skill/cj-chatgpt-handoff/references/evidence-workflow.md).
+
+**本地試行：0.1.2-local.2。** 此版本新增證據包、任務續接與選用的實作後複審；下方公開 Release 連結仍下載 v0.1.1。操作見[中英流程](skill/cj-chatgpt-handoff/references/evidence-workflow.md)。
 
 **ChatGPT Pro for analysis. OpenAI Codex for implementation.**<br>
 **ChatGPT Pro 負責分析，OpenAI Codex 負責實作。**
@@ -84,9 +90,9 @@ python -X utf8 install.py --apply
 2. Preview the installation without writing files. / 只預覽安裝計畫，不寫入檔案。
 3. Install after reviewing the plan. / 檢視計畫後執行安裝。
 
-The target is `CODEX_HOME`, or `~/.codex` when unset. The installer adds four Skill files and a handoff section to global `AGENTS.md`, preserving existing content. Backups default to `~/cj-codex-backups/`; the result prints the actual `backup` and `receipt` paths. Identical files are skipped; conflicting Skill content stops installation for review. SHA256 checks integrity, not a digital signature.
+The target is `CODEX_HOME`, or `~/.codex` when unset. This pilot installs six Skill files and a handoff section in global `AGENTS.md`, preserving existing content. Backups default to `~/cj-codex-backups/`; the result prints the actual `backup` and `receipt` paths. Identical files are skipped; conflicting Skill content stops installation for review. SHA256 checks integrity, not a digital signature.
 
-目標為 `CODEX_HOME`，未設定時使用 `~/.codex`。安裝四個 Skill 檔案並在全域 `AGENTS.md` 追加協作入口，保留既有內容。備份預設位於 `~/cj-codex-backups/`，結果會列出實際 `backup`、`receipt` 路徑。同內容略過，不同內容停止比對。SHA256 用於完整性核對，不是數位簽章。
+目標為 `CODEX_HOME`，未設定時使用 `~/.codex`。本試行版安裝六個 Skill 檔案並在全域 `AGENTS.md` 追加協作入口，保留既有內容。備份預設位於 `~/cj-codex-backups/`，結果會列出實際 `backup`、`receipt` 路徑。同內容略過，不同內容停止比對。SHA256 用於完整性核對，不是數位簽章。
 
 Reload Skills or open a new Codex task and verify that `cj-chatgpt-handoff` is loaded. Then verify one non-sensitive roundtrip in your own dedicated Pro Chat. File installation alone does not prove the integration works.<br>
 重新載入 Skills 或開啟新 Codex 任務，確認 `cj-chatgpt-handoff` 已載入，再用自己的專用 Pro Chat 完成一次無機密往返。檔案安裝成功不代表整合已驗收。

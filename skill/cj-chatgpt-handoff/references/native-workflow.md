@@ -33,7 +33,7 @@ python <script> --project <project> dispatch --request <request_id>
 
 ## 4. 等待與核對
 
-每 30–60 秒 `read_thread` 一次（ChatGPT 不用只支援 Codex 的 wait_threads）。若有人新增訊息，必要時使用 cursor 讀前頁，尋找原始使用者訊息**與 request.md 相符**的回合。核對只容許 CRLF／LF 與尾端換行差異，其餘內容須相同。保存工具 JSON 為 `after.json`。
+使用 `global-workflow.md` 的 `inbox.py wait` 等待本機收據，收到後才呼叫 `read_thread` 取完整原文；不使用模型定時輪詢。若有人新增訊息，必要時使用 cursor 讀前頁，尋找原始使用者訊息**與 request.md 相符**的回合。核對只容許 CRLF／LF 與尾端換行差異，其餘內容須相同。保存工具 JSON 為 `after.json`。
 
 ```text
 python <script> --project <project> complete --request <request_id> --after <after.json>
