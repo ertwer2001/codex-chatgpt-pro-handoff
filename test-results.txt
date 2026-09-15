@@ -1,0 +1,41 @@
+Public release v0.1.0 validation
+Environment: Windows; Python 3.13.1
+Command: python -X utf8 -B -m unittest discover -s tests -v
+All writes confined to test temporary directories; no ChatGPT calls.
+
+test_01_dry_run_has_no_writes (test_cloud_package.CloudPackageTests.test_01_dry_run_has_no_writes) ... ok
+test_02_apply_skill_files_match_sources (test_cloud_package.CloudPackageTests.test_02_apply_skill_files_match_sources) ... ok
+test_03_existing_agents_prefix_and_config_bytes_preserved (test_cloud_package.CloudPackageTests.test_03_existing_agents_prefix_and_config_bytes_preserved) ... ok
+test_04_backup_and_receipt_sha256_match_actual_bytes (test_cloud_package.CloudPackageTests.test_04_backup_and_receipt_sha256_match_actual_bytes) ... ok
+test_05_reapply_is_noop_without_additional_backup (test_cloud_package.CloudPackageTests.test_05_reapply_is_noop_without_additional_backup) ... ok
+test_06_restore_dry_run_has_no_writes (test_cloud_package.CloudPackageTests.test_06_restore_dry_run_has_no_writes) ... ok
+test_07_restore_originals_and_remove_only_new_skill_files (test_cloud_package.CloudPackageTests.test_07_restore_originals_and_remove_only_new_skill_files) ... ok
+test_08_repeated_restore_is_noop (test_cloud_package.CloudPackageTests.test_08_repeated_restore_is_noop) ... ok
+test_09_conflicting_skill_stops_before_any_writes (test_cloud_package.CloudPackageTests.test_09_conflicting_skill_stops_before_any_writes) ... ok
+test_10_tampered_package_stops_before_any_install (test_cloud_package.CloudPackageTests.test_10_tampered_package_stops_before_any_install) ... ok
+test_11_restore_refuses_later_user_change (test_cloud_package.CloudPackageTests.test_11_restore_refuses_later_user_change) ... ok
+test_12_restore_refuses_corrupt_backup (test_cloud_package.CloudPackageTests.test_12_restore_refuses_corrupt_backup) ... ok
+test_13_preexisting_identical_skill_survives_restore (test_cloud_package.CloudPackageTests.test_13_preexisting_identical_skill_survives_restore) ... ok
+test_14_fresh_home_install_and_restore (test_cloud_package.CloudPackageTests.test_14_fresh_home_install_and_restore) ... ok
+test_15_utf8_bom_crlf_agents_roundtrip (test_cloud_package.CloudPackageTests.test_15_utf8_bom_crlf_agents_roundtrip) ... ok
+test_16_unrelated_project_and_evidence_retained (test_cloud_package.CloudPackageTests.test_16_unrelated_project_and_evidence_retained) ... ok
+test_17_all_python_files_compile_without_execution (test_cloud_package.CloudPackageTests.test_17_all_python_files_compile_without_execution) ... ok
+test_18_state_status_is_readonly_in_explicit_store (test_cloud_package.CloudPackageTests.test_18_state_status_is_readonly_in_explicit_store) ... ok
+test_completed_retry_recovers_active_pointer (test_handoff_state.HandoffTests.test_completed_retry_recovers_active_pointer) ... ok
+test_cross_project_chat_reuse_rejected (test_handoff_state.HandoffTests.test_cross_project_chat_reuse_rejected) ... ok
+test_duplicate_dispatch_and_pending_rebind_rejected (test_handoff_state.HandoffTests.test_duplicate_dispatch_and_pending_rebind_rejected) ... ok
+test_lock_prevents_overlapping_writes (test_handoff_state.HandoffTests.test_lock_prevents_overlapping_writes) ... ok
+test_modified_prompt_not_sent (test_handoff_state.HandoffTests.test_modified_prompt_not_sent) ... ok
+test_native_line_endings_and_trimmed_final_newline (test_handoff_state.HandoffTests.test_native_line_endings_and_trimmed_final_newline) ... ok
+test_old_wrong_pending_and_duplicate_turns_rejected (test_handoff_state.HandoffTests.test_old_wrong_pending_and_duplicate_turns_rejected) ... ok
+test_pending_target_rejected (test_handoff_state.HandoffTests.test_pending_target_rejected) ... ok
+test_resolution_preserves_request_and_requires_model_recheck (test_handoff_state.HandoffTests.test_resolution_preserves_request_and_requires_model_recheck) ... ok
+test_status_does_not_create_files (test_handoff_state.HandoffTests.test_status_does_not_create_files) ... ok
+test_success_persists_across_process_instances (test_handoff_state.HandoffTests.test_success_persists_across_process_instances) ... ok
+test_tool_wrapper_supported (test_handoff_state.HandoffTests.test_tool_wrapper_supported) ... ok
+test_unknown_model_cannot_prepare (test_handoff_state.HandoffTests.test_unknown_model_cannot_prepare) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 9.123s
+
+OK

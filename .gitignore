@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+pro-handoff/
+receipt.json
+state.json
+*.lock
+.env
+.env.*

@@ -1,0 +1,6 @@
+{
+  "skill/cj-chatgpt-handoff/SKILL.md": "f8db3e20b1d8eb3dc8e11e4814c3adbea6457e064bf4fdbd1c2d8f04bd34c1fe",
+  "skill/cj-chatgpt-handoff/agents/openai.yaml": "fef4713a58caa357dca6317d7847bbdbff1b15e2cd8ae28d2c56b2e2507777f1",
+  "skill/cj-chatgpt-handoff/references/native-workflow.md": "a7b14a9ce826cb8272d79a13d62c8cfbd7f032d530dd65e8acf7899155a5d16e",
+  "skill/cj-chatgpt-handoff/scripts/handoff_state.py": "94dddd8462d7134b6401ea0ecc09bb8c1a3618c3bba9606bb06fca6f6a34c187"
+}
