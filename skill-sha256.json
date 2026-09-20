@@ -1,8 +1,10 @@
 {
-  "skill/cj-chatgpt-handoff/SKILL.md": "a905f1c4f35fcf3fa2917047032446f5101122fd92a5084c873ee879f5fa35ad",
-  "skill/cj-chatgpt-handoff/agents/openai.yaml": "fef4713a58caa357dca6317d7847bbdbff1b15e2cd8ae28d2c56b2e2507777f1",
-  "skill/cj-chatgpt-handoff/references/native-workflow.md": "a7b14a9ce826cb8272d79a13d62c8cfbd7f032d530dd65e8acf7899155a5d16e",
-  "skill/cj-chatgpt-handoff/scripts/handoff_state.py": "28d812c6cd87f79a99ef035493036ba7270d5fd92f5b1c75861a5bf78269cbc3",
+  "skill/cj-chatgpt-handoff/SKILL.md": "96a7cb5f2f2f10cb76045c032ed2df0cbfdbeeaa104893e8134f265ff54db2e2",
+  "skill/cj-chatgpt-handoff/agents/openai.yaml": "23f177659102918bb3a9ab1a92c5f9514ec0ce4947a7dce30a1e00f716901594",
+  "skill/cj-chatgpt-handoff/references/native-workflow.md": "b4f335d547bcc96c0c25c0ec9780d5cde915cb9a22eead91f9c0e9aa7810a9bb",
+  "skill/cj-chatgpt-handoff/references/global-workflow.md": "e56ce093f086dee1b52ce0976e421c47e5a1d3f48957753e5dc9a849a84ea03f",
+  "skill/cj-chatgpt-handoff/scripts/handoff_state.py": "a8bbd4979b868a84c958833d5199a2f775e63b8bf641504eee2e9a01d52f77c0",
+  "skill/cj-chatgpt-handoff/scripts/inbox.py": "8e7323a305a52367b185117eff6cc0629ff26754fc13a3b24cb3914b02e40da4",
   "skill/cj-chatgpt-handoff/scripts/handoff_evidence.py": "e95ceca295a66ae6f866e1fb0194064c1474e19275bbd394bcdbaed75d671c10",
   "skill/cj-chatgpt-handoff/references/evidence-workflow.md": "5c1a60e67c1cac90357d45164d21210fe8c4d77e182e741cb8bbcc9aaf4373ef"
 }

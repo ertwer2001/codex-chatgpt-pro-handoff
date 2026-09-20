@@ -1,4 +1,4 @@
-> **v0.3.1 source preview / 原始碼預覽**: global project routing and receiver source are included. Portable installer integration is being completed by Pro; this branch is not yet the final installation release. / 已含全域專案分流及接收器，Pro 正在整合可攜安裝器，本分支尚非最終安裝版。
+> **v0.3.2 source preview / 原始碼預覽**: global project routing, receiver bootstrap, verified return, and no-Pro Codex fallback are included. A clean second Windows computer has not yet completed end-to-end validation, so this branch is not the latest stable release. / 已含全域專案分流、接收器啟動檔、驗證回傳與無 Pro 的 Codex 替代路由；第二台乾淨 Windows 尚未完成端對端驗收，本分支尚非最新穩定版。
 
 # Codex ChatGPT Pro Handoff Skill｜Codex 專用中英協作工具
 
@@ -6,8 +6,8 @@
 
 **本地試行：0.1.2-local.2。** 此版本新增證據包、任務續接與選用的實作後複審；下方公開 Release 連結仍下載 v0.1.1。操作見[中英流程](skill/cj-chatgpt-handoff/references/evidence-workflow.md)。
 
-**ChatGPT Pro for analysis. OpenAI Codex for implementation.**<br>
-**ChatGPT Pro 負責分析，OpenAI Codex 負責實作。**
+**ChatGPT Pro for analysis and verified return. OpenAI Codex for implementation.**<br>
+**ChatGPT Pro 負責分析並經驗證回傳，OpenAI Codex 負責實作。**
 
 [![Download ZIP](https://img.shields.io/badge/Download-ZIP-0969da)](https://github.com/ertwer2001/codex-chatgpt-pro-handoff/releases/latest)
 [![Codex only](https://img.shields.io/badge/Platform-Codex%20app-111827)](#requirements)
@@ -27,6 +27,7 @@ An open-source **Codex Skill for ChatGPT Pro integration and context handoff**. 
 ## Download｜下載
 
 - **[Download bilingual v0.1.1 ZIP｜下載中英對照 v0.1.1 ZIP](https://github.com/ertwer2001/codex-chatgpt-pro-handoff/releases/download/v0.1.1/codex-chatgpt-pro-handoff-v0.1.1.zip)**
+- **[Download v0.3.2 preview ZIP｜下載 v0.3.2 預覽 ZIP](https://github.com/ertwer2001/codex-chatgpt-pro-handoff/raw/release/v0.3.1/dist/codex-chatgpt-pro-handoff-v0.3.2-preview.zip)** — includes the receiver bootstrap and no-Pro fallback; validate it on a non-production Codex setup first. / 含接收器啟動檔與無 Pro 替代路由；請先在非正式的 Codex 環境驗證。
 - [Latest release and ZIP checksum｜最新版與 ZIP 校驗檔](https://github.com/ertwer2001/codex-chatgpt-pro-handoff/releases/latest)
 - [Skill entry point｜Skill 入口](skill/cj-chatgpt-handoff/SKILL.md)
 
@@ -39,6 +40,8 @@ ZIP 包含原始碼、中英安裝說明、可還原安裝器、測試與 SHA256
 | Feature | English | 繁體中文 |
 | --- | --- | --- |
 | Pro consultation | Ask Pro to review code, compare architectures, or analyze difficult bugs; Codex implements and tests. | 請 Pro 審查程式、比較架構或分析疑難錯誤，由 Codex 實作與測試。 |
+| Verified return | Match Request-ID, prompt, completed turn and file hashes before Pro text or files become Codex input. | 核對 Request-ID、完整請求、completed 回合與檔案雜湊後，才把 Pro 文字或檔案交回 Codex。 |
+| No-Pro fallback | If 6 Pro is unavailable, finish in Codex with the strongest model and reasoning visible in that client; label it as a Codex result. | 若 6 Pro 不可用，改用該 Codex 用戶端可選的最高模型與推理強度完成，並標示為 Codex 結果。 |
 | Native handoff | Use native Codex app chat tools; keep the current Codex model and `config.toml`. | 使用 Codex app 原生對話工具，保留既有模型與 `config.toml`。 |
 | Project separation | Bind a dedicated Chat per project; reject reuse across projects in the same local ledger. | 每個專案綁定專用 Chat，阻止同一本機紀錄庫內跨專案共用。 |
 | Traceable responses | Track a unique Request-ID, exact prompt, new completed turn, and SHA256 receipt. | 追蹤唯一 Request-ID、完整請求、新 completed 回合與 SHA256 收據。 |
@@ -58,7 +61,7 @@ flowchart LR
 | Requirement / 條件 | English | 繁體中文 |
 | --- | --- | --- |
 | Codex client | A Codex app session exposing the three native tools listed below. CLI/IDE availability is not guaranteed. | Codex app 工作階段須提供下列三個原生工具；不保證 CLI／IDE 皆可用。 |
-| ChatGPT account | Access to GPT-6 / 6 Pro in the target Chat; confirm the selection before every send. | 帳號可在目標 Chat 選擇 GPT-6／6 Pro，且每次傳送前重新確認。 |
+| ChatGPT account | Optional: use GPT-6 / 6 Pro in the target Chat and confirm it before every send. Without Pro, use the Codex fallback. | 選用：帳號可在目標 Chat 選擇 GPT-6／6 Pro，且每次傳送前重新確認；沒有 Pro 時使用 Codex 替代路由。 |
 | Python | Python 3.10+; installer and state script use only the standard library. | Python 3.10+；安裝器與狀態腳本只用標準函式庫。 |
 | New computers | Install once per computer and bind a separate Chat for each computer/project. | 每台電腦安裝一次，每台電腦／每個專案綁定獨立 Chat。 |
 
@@ -72,7 +75,7 @@ mcp__codex_app__send_message_to_thread
 
 The Skill guides Codex; its Python script only records and validates local state. Installing it does not add native tools, grant file access, or add Pro to the Codex model selector. It is not a standalone MCP server or model provider. Sending `model` / `thinking` cannot switch a ChatGPT conversation to Pro.
 
-Skill 引導 Codex 執行流程；Python 腳本只記錄及核對本機狀態。安裝不會新增原生工具、授予檔案存取權或把 Pro 加到 Codex 模型選單。它不是獨立 MCP server 或 model provider；`model`／`thinking` 參數無法替 ChatGPT 對話切換 Pro。
+Skill 引導 Codex 執行流程；Python 腳本只記錄及核對本機狀態。安裝不會新增原生工具、授予檔案存取權或把 Pro 加到 Codex 模型選單。它不是獨立 MCP server 或 model provider；`model`／`thinking` 參數無法替 ChatGPT 對話切換 Pro。沒有 Pro 時，Skill 只能指示 Codex 採用該用戶端可選的最高設定，不能越過介面限制替使用者取得 Ultra 或 Max。
 
 <a id="install"></a>
 ## Installation｜安裝
@@ -90,9 +93,13 @@ python -X utf8 install.py --apply
 2. Preview the installation without writing files. / 只預覽安裝計畫，不寫入檔案。
 3. Install after reviewing the plan. / 檢視計畫後執行安裝。
 
-The target is `CODEX_HOME`, or `~/.codex` when unset. This pilot installs six Skill files and a handoff section in global `AGENTS.md`, preserving existing content. Backups default to `~/cj-codex-backups/`; the result prints the actual `backup` and `receipt` paths. Identical files are skipped; conflicting Skill content stops installation for review. SHA256 checks integrity, not a digital signature.
+The target is `CODEX_HOME`, or `~/.codex` when unset. This preview installs eight Skill files, a sanitized local receiver bootstrap, and a handoff section in global `AGENTS.md`, preserving existing content. The bootstrap contains no pairing token. Backups default to `~/cj-codex-backups/`; the result prints the actual `backup` and `receipt` paths. Identical files are skipped; conflicting files stop installation for review. SHA256 checks integrity, not a digital signature.
 
-目標為 `CODEX_HOME`，未設定時使用 `~/.codex`。本試行版安裝六個 Skill 檔案並在全域 `AGENTS.md` 追加協作入口，保留既有內容。備份預設位於 `~/cj-codex-backups/`，結果會列出實際 `backup`、`receipt` 路徑。同內容略過，不同內容停止比對。SHA256 用於完整性核對，不是數位簽章。
+目標為 `CODEX_HOME`，未設定時使用 `~/.codex`。本預覽版安裝八個 Skill 檔案、已去除配對密鑰的本機接收器啟動檔，並在全域 `AGENTS.md` 追加協作入口，保留既有內容。備份預設位於 `~/cj-codex-backups/`，結果會列出實際 `backup`、`receipt` 路徑。同內容略過，不同內容停止比對。SHA256 用於完整性核對，不是數位簽章。
+
+For Pro return, the first `inbox.py ensure` creates the machine-local pairing data and loopback service. Then load the extension from `<CODEX_HOME>/pro-inbox/bootstrap/extension` in Chrome Developer Mode. Chrome requires this manual load; the installer does not change browser security settings.
+
+要使用 Pro 回傳時，第一次執行 `inbox.py ensure` 會建立該電腦自己的配對資料與本機 loopback 服務；之後在 Chrome 開發人員模式載入 `<CODEX_HOME>/pro-inbox/bootstrap/extension`。Chrome 必須由使用者手動載入擴充功能，安裝器不會變更瀏覽器安全設定。
 
 Reload Skills or open a new Codex task and verify that `cj-chatgpt-handoff` is loaded. Then verify one non-sensitive roundtrip in your own dedicated Pro Chat. File installation alone does not prove the integration works.<br>
 重新載入 Skills 或開啟新 Codex 任務，確認 `cj-chatgpt-handoff` 已載入，再用自己的專用 Pro Chat 完成一次無機密往返。檔案安裝成功不代表整合已驗收。
@@ -132,6 +139,7 @@ Report missing tools or permissions; distinguish installation from successful ha
 | Code review | Use `$cj-chatgpt-handoff` to ask 6 Pro to review this refactor, then implement and test the agreed changes within my authorization. | 使用 `$cj-chatgpt-handoff`，請 6 Pro 審查重構方案，再依我的授權修改與測試。 |
 | Architecture | Use `$cj-chatgpt-handoff` to compare these two architectures. Analysis only; do not modify files. | 使用 `$cj-chatgpt-handoff`，請 6 Pro 比較兩種架構，只分析、不改檔。 |
 | Debugging | Use `$cj-chatgpt-handoff` to analyze this error and the attempts already made, then verify the proposed fix locally. | 使用 `$cj-chatgpt-handoff`，請 6 Pro 分析錯誤及已試方法，再於本機驗證修正。 |
+| No Pro | Use `$cj-chatgpt-handoff` for this analysis. I do not have Pro; use the strongest Codex model and reasoning available, and label the result as Codex fallback. | 使用 `$cj-chatgpt-handoff` 處理這個分析；我沒有 Pro，請使用目前可選的最高 Codex 模型與推理強度，並標示為 Codex 替代結果。 |
 
 Use the explicit Skill name for reliable selection across languages. Ordinary development and informational questions about Pro do not require a consultation. A new project needs its own Chat binding and model confirmation. Keep context concise; if a response tool truncates the original prompt, retrieve the complete text before verification instead of guessing missing content or resending.
 

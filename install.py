@@ -11,13 +11,17 @@ import uuid
 
 PACKAGE = Path(__file__).resolve().parent
 SKILL = 'cj-chatgpt-handoff'
-SOURCE_FILES = ['SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'scripts/handoff_state.py',
-                'references/evidence-workflow.md', 'scripts/handoff_evidence.py']
+SKILL_FILES = ['SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'references/global-workflow.md',
+               'scripts/handoff_state.py', 'scripts/inbox.py', 'references/evidence-workflow.md',
+               'scripts/handoff_evidence.py']
+RECEIVER_FILES = ['relay.py', 'setup_relay.py', 'extension/background.js', 'extension/content.js',
+                  'extension/local-config.js', 'extension/manifest.json', 'extension/popup.html',
+                  'extension/popup.js']
 ROUTE = '''
 
 ## GPT-6 Pro 協作
 
-使用者要求「請 Pro 分析／審查／幫忙」或呼叫 `$cj-chatgpt-handoff` 時，讀取 [cj-chatgpt-handoff](skills/cj-chatgpt-handoff/SKILL.md)，使用目前電腦與專案的專用 ChatGPT GPT-6 Pro 對話轉交必要背景，再由原 Codex 任務依授權處理與驗證。一般任務不自動傳送；不增加各專案原有授權與資料存取範圍。
+使用者要求「請 Pro 分析／審查／幫忙」或呼叫 `$cj-chatgpt-handoff` 時，讀取 [cj-chatgpt-handoff](skills/cj-chatgpt-handoff/SKILL.md)。已確認 6 Pro 且接收器可用時，將必要背景交給專用 ChatGPT Pro，核對收據後把成果回到原 Codex 任務；沒有 Pro、額度不足、模型未確認或原生工具不可用時，不做普通 Chat 降級轉交，直接用 Codex 用戶端可選的最高模型與推理強度完成，並標示為 Codex 替代結果。一般任務不自動傳送；不增加各專案原有授權與資料存取範圍。
 '''
 
 
@@ -36,11 +40,24 @@ def save(path, data):
     atomic(path, (json.dumps(data, ensure_ascii=False, indent=2) + '\n').encode('utf-8'))
 
 
+def remove_empty_install_dirs(target, destination):
+    """Remove only empty directories created below the two installer-owned roots."""
+    anchors = {destination / 'skills', destination / 'pro-inbox'}
+    parent = target.parent
+    while parent not in anchors and parent.is_relative_to(destination):
+        try:
+            parent.rmdir()
+        except OSError:
+            break
+        parent = parent.parent
+
+
 def restore(receipt_path, apply):
     receipt_path = receipt_path.resolve(strict=True)
     receipt = json.loads(receipt_path.read_text(encoding='utf-8'))
     destination = Path(receipt['codex_home']).resolve()
-    allowed = {'AGENTS.md'} | {'skills/' + SKILL + '/' + rel for rel in SOURCE_FILES}
+    allowed = {'AGENTS.md'} | {'skills/' + SKILL + '/' + rel for rel in SKILL_FILES}
+    allowed |= {'pro-inbox/bootstrap/' + rel for rel in RECEIVER_FILES}
     operations = []
     for entry in receipt['files']:
         rel = entry['relative_path']
@@ -68,6 +85,7 @@ def restore(receipt_path, apply):
         for target, before in operations:
             if before is None:
                 target.unlink()
+                remove_empty_install_dirs(target, destination)
             else:
                 atomic(target, before)
             if before is not None and target.read_bytes() != before:
@@ -78,14 +96,18 @@ def restore(receipt_path, apply):
 
 def install(destination, backup_root, apply):
     destination = destination.expanduser().resolve()
-    hashes = json.loads((PACKAGE / 'skill-sha256.json').read_text(encoding='utf-8'))
+    skill_hashes = json.loads((PACKAGE / 'skill-sha256.json').read_text(encoding='utf-8'))
+    package_hashes = json.loads((PACKAGE / 'SHA256SUMS.json').read_text(encoding='utf-8'))
     changes = []
-    for rel in SOURCE_FILES:
-        package_rel = 'skill/' + SKILL + '/' + rel
+    sources = [('skill/' + SKILL + '/' + rel, 'skills/' + SKILL + '/' + rel) for rel in SKILL_FILES]
+    sources += [('receiver/' + rel, 'pro-inbox/bootstrap/' + rel) for rel in RECEIVER_FILES]
+    for package_rel, relative in sources:
         data = (PACKAGE / package_rel).read_bytes()
-        if digest(data) != hashes[package_rel]:
-            raise ValueError('Package hash mismatch: ' + rel)
-        relative = 'skills/' + SKILL + '/' + rel
+        expected = package_hashes.get(package_rel)
+        if expected is None or digest(data) != expected:
+            raise ValueError('Package hash mismatch: ' + package_rel)
+        if package_rel.startswith('skill/') and skill_hashes.get(package_rel) != expected:
+            raise ValueError('Missing Skill hash: ' + package_rel)
         target = destination / relative
         if not target.resolve().is_relative_to(destination):
             raise ValueError('Install target escapes Codex home')

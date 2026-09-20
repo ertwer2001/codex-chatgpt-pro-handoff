@@ -1,6 +1,6 @@
 interface:
   display_name: "Codex 與 GPT-6 Pro 協作"
-  short_description: "將目前專案必要背景交給 GPT-6 Pro 分析，取回建議並由 Codex 驗證"
-  default_prompt: "使用 $cj-chatgpt-handoff，請 GPT-6 Pro 分析目前專案的問題，再依本次授權由 Codex 處理。"
+  short_description: "Pro 成果回傳 Codex；無 Pro 時使用 Codex 最高強度"
+  default_prompt: "使用 $cj-chatgpt-handoff 分析目前專案；可用 6 Pro 時將成果回傳 Codex，沒有 Pro 時以 Codex 最高可用強度完成。"
 policy:
   allow_implicit_invocation: true

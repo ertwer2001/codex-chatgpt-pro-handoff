@@ -1,6 +1,6 @@
 # 全域 Pro 送出與回傳
 
-所有路徑均以目前專案為準，Skill 腳本使用絕對路徑。原生工具和模型確認仍依 SKILL.md。
+所有路徑均以目前專案為準，Skill 腳本使用絕對路徑。原生工具和模型確認仍依 SKILL.md。這份流程只適用已確認 6 Pro 的「Pro 回傳」路由；沒有 Pro 或沒有原生工具時，直接以 Codex 用戶端可選的最高模型及推理強度完成，且不建立請求、不啟動接收器、不冒稱有 Pro 回傳。
 
 ```text
 python <skill>/scripts/inbox.py --project <project> ensure
@@ -28,7 +28,7 @@ python <skill>/scripts/inbox.py --project <project> wait --request <generated-id
 python <skill>/scripts/handoff_state.py --project <project> complete --request <generated-id> --after <after.json>
 ```
 
-原生 Markdown 與網頁 innerText 的公式格式可能不同，保留原始回覆。連結／附件從本機收據交付。核對錯誤或讀取工具故障不能宣稱 native verified，仍保留已收原檔。
+原生 Markdown 與網頁 innerText 的公式格式可能不同，保留原始回覆。連結／附件從本機收據交付到目前 Codex 任務，核對錯誤或讀取工具故障不能宣稱 native verified，仍保留已收原檔。
 
 接收器以專案帳本、完整 prompt、Request-ID、來源 Codex thread、Chat thread 和檔案雜湊匹配。多專案可發送到不同 Chat；瀏覽器收件目前依單一接收工作序列化，失敗工作需先排除，其他等待不得覆寫它。
 

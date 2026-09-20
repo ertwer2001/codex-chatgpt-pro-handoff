@@ -1,5 +1,5 @@
 """Per-project access to the shared Pro receiver. Waiting never invokes a model."""
-import argparse,hashlib,json,subprocess,sys,time,urllib.request
+import argparse,hashlib,json,os,subprocess,sys,time,urllib.request
 from pathlib import Path
 from handoff_state import Ledger,read_json,write_json
 
@@ -27,9 +27,15 @@ def main():
     sub.add_parser('ensure')
     wait=sub.add_parser('wait');wait.add_argument('--request',required=True);wait.add_argument('--timeout',type=int,default=2400)
     args=parser.parse_args();ledger=Ledger(args.project)
-    base=Path.home()/'.codex/pro-inbox'
+    codex_home=Path(os.environ.get('CODEX_HOME') or Path.home()/'.codex').expanduser().resolve()
+    base=codex_home/'pro-inbox'
     if args.command=='ensure':
-        subprocess.run([sys.executable,'-X','utf8',str(base/'runtime/setup_relay.py')],check=True)
+        setup=base/'runtime/setup_relay.py'
+        if not setup.is_file():
+            setup=base/'bootstrap/setup_relay.py'
+        if not setup.is_file():
+            raise ValueError('Receiver bootstrap is not installed; reinstall this package before using Pro return')
+        subprocess.run([sys.executable,'-X','utf8',str(setup)],check=True)
         config=read_json(base/'config.json')
         req=urllib.request.Request('http://127.0.0.1:'+str(config['port'])+'/health',headers={'Authorization':'Bearer '+config['token']})
         with urllib.request.urlopen(req,timeout=3) as r:health=json.load(r)

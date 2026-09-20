@@ -17,7 +17,16 @@ import unittest
 
 PACKAGE = Path(__file__).resolve().parents[1]
 SKILL = 'cj-chatgpt-handoff'
-FILES = ('SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'scripts/handoff_state.py', 'scripts/handoff_evidence.py', 'references/evidence-workflow.md')
+SKILL_FILES = ('SKILL.md', 'agents/openai.yaml', 'references/native-workflow.md', 'references/global-workflow.md',
+               'scripts/handoff_state.py', 'scripts/inbox.py', 'scripts/handoff_evidence.py',
+               'references/evidence-workflow.md')
+RECEIVER_FILES = ('relay.py', 'setup_relay.py', 'extension/background.js', 'extension/content.js',
+                  'extension/local-config.js', 'extension/manifest.json', 'extension/popup.html',
+                  'extension/popup.js')
+INSTALL_FILES = {
+    **{'skills/' + SKILL + '/' + rel: 'skill/' + SKILL + '/' + rel for rel in SKILL_FILES},
+    **{'pro-inbox/bootstrap/' + rel: 'receiver/' + rel for rel in RECEIVER_FILES},
+}
 AGENTS_ORIGINAL = '# Existing local rules\nDo not remove this rule.\n'.encode('utf-8')
 CONFIG_ORIGINAL = b'model = "unchanged-test-model"\nmodel_reasoning_effort = "high"\n'
 
@@ -71,15 +80,15 @@ class CloudPackageTests(unittest.TestCase):
         before_backup = snapshot(self.backup_root)
         result = self.cli()
         self.assertEqual(result['status'], 'READY')
-        self.assertEqual(len(result['files_to_change']), 7)
+        self.assertEqual(len(result['files_to_change']), len(INSTALL_FILES) + 1)
         self.assertEqual(snapshot(self.home_root), before_home)
         self.assertEqual(snapshot(self.backup_root), before_backup)
 
     def test_02_apply_skill_files_match_sources(self):
         self.installed()
-        for rel in FILES:
-            self.assertEqual((self.home / 'skills' / SKILL / rel).read_bytes(),
-                             (PACKAGE / 'skill' / SKILL / rel).read_bytes())
+        for target, source in INSTALL_FILES.items():
+            self.assertEqual((self.home / target).read_bytes(), (PACKAGE / source).read_bytes())
+        self.assertFalse((self.home / 'pro-inbox' / 'config.json').exists())
 
     def test_03_existing_agents_prefix_and_config_bytes_preserved(self):
         self.installed()
@@ -94,7 +103,7 @@ class CloudPackageTests(unittest.TestCase):
         self.assertTrue(receipt_path.is_relative_to(self.backup_root))
         receipt = json.loads(receipt_path.read_text(encoding='utf-8'))
         self.assertEqual(receipt['codex_home'], str(self.home.resolve()))
-        self.assertEqual(len(receipt['files']), 7)
+        self.assertEqual(len(receipt['files']), len(INSTALL_FILES) + 1)
         self.assertEqual((receipt_path.parent / 'install.py').read_bytes(), (PACKAGE / 'install.py').read_bytes())
         for entry in receipt['files']:
             rel = entry['relative_path']
@@ -120,7 +129,7 @@ class CloudPackageTests(unittest.TestCase):
         before_home, before_backup = snapshot(self.home_root), snapshot(self.backup_root)
         restored = self.cli('--restore', result['receipt'])
         self.assertEqual(restored['status'], 'RESTORE_READY')
-        self.assertEqual(restored['file_count'], 7)
+        self.assertEqual(restored['file_count'], len(INSTALL_FILES) + 1)
         self.assertEqual(snapshot(self.home_root), before_home)
         self.assertEqual(snapshot(self.backup_root), before_backup)
 
@@ -128,11 +137,11 @@ class CloudPackageTests(unittest.TestCase):
         result = self.installed()
         restored = self.cli('--restore', result['receipt'], '--apply')
         self.assertEqual(restored['status'], 'RESTORED')
-        self.assertEqual(restored['file_count'], 7)
+        self.assertEqual(restored['file_count'], len(INSTALL_FILES) + 1)
         self.assertEqual((self.home / 'AGENTS.md').read_bytes(), AGENTS_ORIGINAL)
         self.assertEqual((self.home / 'config.toml').read_bytes(), CONFIG_ORIGINAL)
-        for rel in FILES:
-            self.assertFalse((self.home / 'skills' / SKILL / rel).exists())
+        for target in INSTALL_FILES:
+            self.assertFalse((self.home / target).exists())
         self.assertTrue(Path(result['receipt']).exists())
 
     def test_08_repeated_restore_is_noop(self):
@@ -185,13 +194,15 @@ class CloudPackageTests(unittest.TestCase):
         self.assertEqual(snapshot(self.home_root), before)
 
     def test_13_preexisting_identical_skill_survives_restore(self):
-        shutil.copytree(PACKAGE / 'skill' / SKILL, self.home / 'skills' / SKILL)
+        for target, source in INSTALL_FILES.items():
+            path = self.home / target
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes((PACKAGE / source).read_bytes())
         result = self.installed()
         self.assertEqual(result['files_to_change'], ['AGENTS.md'])
         self.cli('--restore', result['receipt'], '--apply')
-        for rel in FILES:
-            self.assertEqual((self.home / 'skills' / SKILL / rel).read_bytes(),
-                             (PACKAGE / 'skill' / SKILL / rel).read_bytes())
+        for target, source in INSTALL_FILES.items():
+            self.assertEqual((self.home / target).read_bytes(), (PACKAGE / source).read_bytes())
         self.assertEqual((self.home / 'AGENTS.md').read_bytes(), AGENTS_ORIGINAL)
 
     def test_14_fresh_home_install_and_restore(self):
@@ -205,6 +216,8 @@ class CloudPackageTests(unittest.TestCase):
         self.cli('--restore', result['receipt'], '--apply')
         self.assertFalse((self.home / 'AGENTS.md').exists())
         self.assertEqual([p for p in self.home.rglob('*') if p.is_file()], [])
+        self.assertFalse((self.home / 'skills' / SKILL).exists())
+        self.assertFalse((self.home / 'pro-inbox' / 'bootstrap').exists())
 
     def test_15_utf8_bom_crlf_agents_roundtrip(self):
         original = b'\xef\xbb\xbf' + '# 原有規則\r\n保留。\r\n'.encode('utf-8')

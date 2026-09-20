@@ -5,17 +5,20 @@ import json
 import zipfile
 
 ROOT = Path(__file__).resolve().parent
-VERSION = '0.1.2-local.2'
+VERSION = '0.3.2-preview'
 FILES = [
     'README.md', 'START_HERE.md', 'LICENSE', 'CHANGELOG.md', 'VALIDATION.md',
     '.gitignore', '.gitattributes', 'install.py', 'verify_package.py', 'build_release.py',
     'skill-sha256.json', 'test-results.txt', 'test-results-local.2.txt', 'docs/WORKFLOW.en.md',
     'tests/test_cloud_package.py', 'tests/test_handoff_state.py', 'tests/test_doctor.py', 'docs/DOCTOR.md',
     'skill/cj-chatgpt-handoff/SKILL.md', 'skill/cj-chatgpt-handoff/agents/openai.yaml',
-    'skill/cj-chatgpt-handoff/references/native-workflow.md',
-    'skill/cj-chatgpt-handoff/scripts/handoff_state.py',
+    'skill/cj-chatgpt-handoff/references/native-workflow.md', 'skill/cj-chatgpt-handoff/references/global-workflow.md',
+    'skill/cj-chatgpt-handoff/scripts/handoff_state.py', 'skill/cj-chatgpt-handoff/scripts/inbox.py',
     'skill/cj-chatgpt-handoff/scripts/handoff_evidence.py',
     'skill/cj-chatgpt-handoff/references/evidence-workflow.md', 'tests/test_evidence.py',
+    'receiver/relay.py', 'receiver/setup_relay.py', 'receiver/extension/background.js',
+    'receiver/extension/content.js', 'receiver/extension/local-config.js', 'receiver/extension/manifest.json',
+    'receiver/extension/popup.html', 'receiver/extension/popup.js',
 ]
 
 
