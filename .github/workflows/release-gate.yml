@@ -1,0 +1,31 @@
+name: Release gate
+
+# 共同上線閘門：見 AGENTS.md 的「跨模組協調」。
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  push:
+    tags: ['v*']
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - name: 檢查上線協調 Issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HUB_REPO: ertwer2001/ai-boss-office
+          TRAIN_LABEL: release-train
+          THIS_REPO: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_TEXT: ${{ github.event.pull_request.title }} ${{ github.event.pull_request.body }}
+        run: bash .github/scripts/release-gate.sh
